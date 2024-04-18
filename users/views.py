@@ -1,6 +1,7 @@
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, generics
+from rest_framework.permissions import IsAuthenticated
 
 from users.models import Payment, User
 from users.serializers import PaymentSerializer, UserSerializer
@@ -23,21 +24,25 @@ class UserCreateAPIViewSet(generics.CreateAPIView):
 class UserRetrieveAPIViewSet(generics.RetrieveAPIView):
     """Класс для отображения User."""
     serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class UserListAPIViewSet(generics.ListAPIView):
     """Класс для отображения списка User."""
     serializer_class = UserSerializer
     queryset = User.objects.all()
+    permission_classes = [IsAuthenticated]
 
 
 class UserUpdateAPIViewSet(generics.UpdateAPIView):
     """Класс для обновления User."""
     serializer_class = UserSerializer
     queryset = User.objects.all()
+    permission_classes = [IsAuthenticated]
 
 
 class UserDestroyAPIViewSet(generics.DestroyAPIView):
     """Класс для удаления User."""
     serializer_class = UserSerializer
     queryset = User.objects.all()
+    permission_classes = [IsAuthenticated]
