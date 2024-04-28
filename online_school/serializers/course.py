@@ -5,6 +5,7 @@ from online_school.serializers.lesson import LessonSerializer
 
 
 class CourseSerializer(serializers.ModelSerializer):
+    """Класс сериализатора курса."""
     lesson_count = serializers.SerializerMethodField()
     lessons = LessonSerializer(source='lesson_set', many=True, read_only=True)
 
