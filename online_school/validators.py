@@ -1,12 +1,7 @@
-from rest_framework.serializers import ValidationError
+from rest_framework import serializers
 
 
-class UrlValidator:
-    """Класс валидатор для поля ссылки."""
-    def __init__(self, field):
-        self.field = field
-
-    def __call__(self, value):
-        """Метод для проверки допустимой ссылки"""
-        if 'youtube.com' not in value:
-            raise ValidationError('Должна быть ссылка с сайта "youtube.com"')
+def video_url_validator(value):
+    """Метод для валидации поля ссылки на видео."""
+    if 'youtube.com' not in value:
+        raise serializers.ValidationError('Введите правильный URL.')
