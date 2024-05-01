@@ -1,13 +1,14 @@
 from rest_framework.filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, generics
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from online_school.models import Course
 from users.models import Payment, User, Subscription
 from users.serializers import PaymentSerializer, UserSerializer
+from users.services import create_stripe_price, create_stripe_product, create_stripe_session
 
 
 class PaymentListAPIViewSet(generics.ListAPIView):
@@ -17,6 +18,24 @@ class PaymentListAPIViewSet(generics.ListAPIView):
     filter_backends = [DjangoFilterBackend, OrderingFilter, ]
     filterset_fields = ('paid_course', 'paid_lesson', 'payment_method')
     ordering_fields = ['payment_method', ]
+
+
+class PaymentCreateAPIViewSet(generics.CreateAPIView):
+    """Класс для создания платежа."""
+    serializer_class = PaymentSerializer
+    queryset = Payment.objects.all()
+
+    def perform_create(self, serializer):
+        payment = serializer.save(user=self.request.user)
+
+        product = create_stripe_product(payment)
+        price = create_stripe_price(payment.payment_amount, product)
+
+        session_id, payment_id = create_stripe_session(price)
+        payment.payment_id = session_id
+        payment.payment_link = payment_id
+
+        payment.save()
 
 
 class UserCreateAPIViewSet(generics.CreateAPIView):
