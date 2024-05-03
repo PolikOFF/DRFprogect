@@ -1,0 +1,4 @@
+# Запуск worker
+celery -A my_project worker —loglevel=info
+# Запуск beat
+celery -A my_project beat —loglevel=info
