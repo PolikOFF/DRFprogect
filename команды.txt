@@ -1,4 +1,4 @@
 # Запуск worker
-celery -A my_project worker —loglevel=info
+celery -A DRFprogect worker -l INFO -P eventlet
 # Запуск beat
-celery -A my_project beat —loglevel=info
+celery -A DRFprogect beat -l INFO

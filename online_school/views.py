@@ -5,6 +5,7 @@ from online_school.models import Course, Lesson
 from online_school.pagination import CustomPagination
 from online_school.serializers.course import CourseSerializer
 from online_school.serializers.lesson import LessonSerializer
+from online_school.tasks import send_message_for_update
 from users.permissions import IsModerator, IsOwner
 
 
@@ -21,9 +22,15 @@ class CourseViewSet(viewsets.ModelViewSet):
         """Метод для привязки пользователя к созданному объекту."""
         serializer.save(owner=self.request.user)
 
+    def perform_update(self, serializer):
+        """Метод для запуска функции отправки сообщения, при изменении курса."""
+        update_course = serializer.save()
+        send_message_for_update.delay(update_course.id)
+        update_course.save()
+
     def get_permissions(self):
         """
-        Функция для запрета действий не авторизованного пользователя и не модератора.
+        Функция для запрета действий по permissions.
         IsAuthenticated - проверка на авторизацию.
         IsModerator - проверка на принадлежность к модератору.
         """
@@ -33,8 +40,8 @@ class CourseViewSet(viewsets.ModelViewSet):
             self.permission_classes = [IsAuthenticated, IsModerator | IsOwner]
         elif self.action == 'list':
             self.permission_classes = [IsAuthenticated, IsModerator | IsOwner]
-        elif self.action == 'update':
-            self.permission_classes = [IsAuthenticated, IsModerator | IsOwner]
+        # elif self.action == 'update':
+        #     self.permission_classes = [IsAuthenticated, IsModerator | IsOwner]
         elif self.action == 'destroy':
             self.permission_classes = [IsAuthenticated, ~IsModerator & IsOwner]
         return [permission() for permission in self.permission_classes]
