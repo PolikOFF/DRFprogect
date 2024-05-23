@@ -15,6 +15,10 @@ services:
       interval: 10s
       retries: 5
       timeout: 5s
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: 4505
+      POSTGRES_DB: ${POSTGRES_NAME}
 
   app:
     build: .
