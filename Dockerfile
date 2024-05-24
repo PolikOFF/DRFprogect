@@ -1,4 +1,4 @@
-FROM python:3
+FROM python:3.11
 
 RUN apt-get update && dpkg -s netcat-traditional || apt-get install -y netcat-traditional
 

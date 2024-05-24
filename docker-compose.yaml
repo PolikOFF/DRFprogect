@@ -5,19 +5,14 @@ services:
     image: postgres
     restart: on-failure
     env_file:
-      - .env
+      - ./.env
     expose:
       - "5432"
     volumes:
       - ./postgres_data:/var/lib/postgresql/data
     stdin_open: true
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: 4505
-      POSTGRES_DB: ${POSTGRES_NAME}
-      POSTGRES_HOST_AUTH_METHOD: trust
     healthcheck:
-      test: ["CMD", "-c", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "-c", "pg_isready -U $POSTGRES_USER"]
       interval: 10s
       retries: 5
       timeout: 5s
