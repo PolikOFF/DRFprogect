@@ -26,8 +26,8 @@ COPY ./entrypoint.prod.sh .
 RUN sed -i 's/\r$//g'  ./entrypoint.prod.sh
 RUN chmod +x  ./entrypoint.prod.sh
 
-COPY . .
-
 RUN poetry install --no-dev
+
+COPY . .
 
 #ENTRYPOINT ["sh", "./entrypoint.prod.sh"]
